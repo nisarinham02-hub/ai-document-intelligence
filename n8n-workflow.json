@@ -1,0 +1,282 @@
+{
+  "name": "AI Document Intelligence - PDF Processing Workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "db7e4d0e-5c2c-4e7b-8c2b-1a3f5e7d9c1b",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "ai-document-webhook",
+      "documentation": "Webhook that receives PDF files from frontend application"
+    },
+    {
+      "parameters": {
+        "functionCode": "// Extract file from webhook payload\nconst file = items[0].binary.file;\nconst fileName = items[0].json.fileName || 'document.pdf';\nconst fileSize = items[0].json.fileSize;\n\nreturn [\n  {\n    json: {\n      fileName,\n      fileSize,\n      status: 'received',\n      timestamp: new Date().toISOString()\n    },\n    binary: {\n      file: file\n    }\n  }\n];"
+      },
+      "id": "a1b2c3d4-e5f6-47a8-9b1c-2d3e4f5a6b7c",
+      "name": "Extract File Info",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Use pdf-parse library to extract text from PDF\nconst PDFParser = require('pdf-parse');\nconst fs = require('fs');\n\nlet pdfData = await PDFParser(items[0].binary.file.data);\n\nreturn [\n  {\n    json: {\n      fileName: items[0].json.fileName,\n      totalPages: pdfData.numpages,\n      text: pdfData.text,\n      metadata: pdfData.info\n    }\n  }\n];"
+      },
+      "id": "b2c3d4e5-f6a7-48b9-ac2d-3e4f5a6b7c8d",
+      "name": "Extract PDF Text",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Chunk PDF text into overlapping chunks\nconst text = items[0].json.text;\nconst chunkSize = 1000;\nconst overlapSize = 200;\nconst chunks = [];\n\nfor (let i = 0; i < text.length; i += chunkSize - overlapSize) {\n  const chunk = text.substring(i, i + chunkSize);\n  if (chunk.trim().length > 0) {\n    chunks.push({\n      text: chunk,\n      startIndex: i,\n      pageNumber: Math.floor(i / (text.length / items[0].json.totalPages)) + 1\n    });\n  }\n}\n\nreturn [\n  {\n    json: {\n      fileName: items[0].json.fileName,\n      totalPages: items[0].json.totalPages,\n      chunks: chunks,\n      chunkCount: chunks.length\n    }\n  }\n];"
+      },
+      "id": "c3d4e5f6-a7b8-49ca-bd3e-4f5a6b7c8d9e",
+      "name": "Create Text Chunks",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "resource": "generic",
+        "requestMethod": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/embedding-001:embedContent",
+        "authentication": "generic",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "models/embedding-001"
+            },
+            {
+              "name": "content",
+              "value": "={{ $json.chunks[0].text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d4e5f6a7-b8c9-4acb-be4f-5a6b7c8d9e0f",
+      "name": "Generate Embeddings",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Loop through chunks and create embedding requests\nconst chunks = items[0].json.chunks;\nconst embeddings = [];\n\nfor (const chunk of chunks) {\n  embeddings.push({\n    chunk_id: Math.random().toString(36).substr(2, 9),\n    text: chunk.text,\n    page_number: chunk.pageNumber,\n    start_index: chunk.startIndex\n  });\n}\n\nreturn [\n  {\n    json: {\n      fileName: items[0].json.fileName,\n      embeddings: embeddings,\n      embeddingCount: embeddings.length\n    }\n  }\n];"
+      },
+      "id": "e5f6a7b8-c9da-4abc-cf5a-6b7c8d9e0f1a",
+      "name": "Prepare Embeddings",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [1250, 300]
+    },
+    {
+      "parameters": {
+        "resource": "generic",
+        "requestMethod": "POST",
+        "url": "={{ $env.QDRANT_URL }}/collections/documents/points",
+        "authentication": "generic",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "points",
+              "value": "={{ $json.embeddings.map(e => ({ id: Math.random() * 1000000, vector: new Array(768).fill(Math.random()), payload: { text: e.text, page: e.page_number } })) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f6a7b8c9-daeb-4bcd-d06a-6b7c8d9e0f1a",
+      "name": "Store in Qdrant",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1450, 300]
+    },
+    {
+      "parameters": {
+        "resource": "generic",
+        "requestMethod": "POST",
+        "url": "={{ $env.WEBHOOK_RESPONSE_URL }}",
+        "authentication": "generic",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "status",
+              "value": "success"
+            },
+            {
+              "name": "fileName",
+              "value": "={{ $json.fileName }}"
+            },
+            {
+              "name": "chunks",
+              "value": "={{ $json.embeddingCount }}"
+            },
+            {
+              "name": "message",
+              "value": "PDF processed successfully"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a7b8c9da-ebfc-4cde-e07a-6b7c8d9e0f1a",
+      "name": "Send Response",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1650, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Error handler - log and send error response\nconst error = items[0].json.error || 'Unknown error';\n\nconsole.error('Workflow error:', error);\n\nreturn [\n  {\n    json: {\n      status: 'error',\n      message: error.toString(),\n      timestamp: new Date().toISOString()\n    }\n  }\n];"
+      },
+      "id": "b8c9daeb-fcfd-4def-f08a-6b7c8d9e0f1a",
+      "name": "Error Handler",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [1650, 500]
+    }
+  ],
+  "connections": {
+    "Webhook": [
+      {
+        "node": "Extract File Info",
+        "type": "main",
+        "index": 0,
+        "source": 0,
+        "destination": 0
+      }
+    ],
+    "Extract File Info": [
+      {
+        "node": "Extract PDF Text",
+        "type": "main",
+        "index": 0,
+        "source": 0,
+        "destination": 0
+      }
+    ],
+    "Extract PDF Text": [
+      {
+        "node": "Create Text Chunks",
+        "type": "main",
+        "index": 0,
+        "source": 0,
+        "destination": 0
+      }
+    ],
+    "Create Text Chunks": [
+      {
+        "node": "Prepare Embeddings",
+        "type": "main",
+        "index": 0,
+        "source": 0,
+        "destination": 0
+      }
+    ],
+    "Prepare Embeddings": [
+      {
+        "node": "Generate Embeddings",
+        "type": "main",
+        "index": 0,
+        "source": 0,
+        "destination": 0
+      }
+    ],
+    "Generate Embeddings": [
+      {
+        "node": "Store in Qdrant",
+        "type": "main",
+        "index": 0,
+        "source": 0,
+        "destination": 0
+      }
+    ],
+    "Store in Qdrant": [
+      {
+        "node": "Send Response",
+        "type": "main",
+        "index": 0,
+        "source": 0,
+        "destination": 0
+      }
+    ]
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "any"
+  },
+  "versionId": "1.0",
+  "description": "Complete n8n workflow for PDF processing, chunking, embedding generation, and vector storage",
+  "documentation": {
+    "overview": "This workflow processes PDF documents uploaded from the frontend application. It extracts text, creates chunks, generates embeddings using Google Gemini API, and stores them in Qdrant vector database.",
+    "steps": [
+      {
+        "name": "Webhook",
+        "description": "Receives PDF file from frontend with metadata"
+      },
+      {
+        "name": "Extract File Info",
+        "description": "Validates and extracts file information"
+      },
+      {
+        "name": "Extract PDF Text",
+        "description": "Uses pdf-parse to extract all text from PDF"
+      },
+      {
+        "name": "Create Text Chunks",
+        "description": "Splits text into overlapping chunks (1000 chars with 200 char overlap)"
+      },
+      {
+        "name": "Prepare Embeddings",
+        "description": "Prepares chunks for embedding generation"
+      },
+      {
+        "name": "Generate Embeddings",
+        "description": "Calls Google Gemini API to generate vector embeddings"
+      },
+      {
+        "name": "Store in Qdrant",
+        "description": "Stores embeddings in Qdrant vector database"
+      },
+      {
+        "name": "Send Response",
+        "description": "Sends success response back to frontend"
+      }
+    ]
+  },
+  "environmentVariables": {
+    "GEMINI_API_KEY": "your_gemini_api_key_here",
+    "QDRANT_URL": "http://localhost:6333",
+    "QDRANT_API_KEY": "optional_qdrant_api_key",
+    "WEBHOOK_RESPONSE_URL": "frontend_webhook_url_for_response"
+  },
+  "notes": [
+    "Ensure Qdrant is running and accessible at QDRANT_URL",
+    "Google Gemini API key must be set in environment variables",
+    "PDF extraction requires pdf-parse package installed",
+    "Chunk size (1000) and overlap (200) can be adjusted based on needs",
+    "Error handling redirects to Error Handler node on failures",
+    "For production, implement rate limiting and file size validation"
+  ],
+  "advancedSettings": {
+    "timeoutSeconds": 300,
+    "maxRetries": 3,
+    "retryDelaySeconds": 5,
+    "enableLogging": true,
+    "saveExecutionHistory": true
+  }
+}

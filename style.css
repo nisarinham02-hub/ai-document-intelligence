@@ -1,0 +1,854 @@
+/* ============================================
+   AI DOCUMENT INTELLIGENCE - CUSTOM STYLES
+   ============================================ */
+
+/* Root Variables */
+:root {
+    --primary: #3b82f6;
+    --primary-dark: #1e40af;
+    --secondary: #a855f7;
+    --secondary-dark: #6d28d9;
+    --success: #10b981;
+    --error: #ef4444;
+    --warning: #f59e0b;
+    --info: #0ea5e9;
+    --glass: rgba(255, 255, 255, 0.1);
+    --glass-dark: rgba(0, 0, 0, 0.3);
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================
+   GLOBAL STYLES
+   ============================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    overflow-x: hidden;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    transition: background var(--transition-base);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Firefox Scrollbar */
+* {
+    scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.05);
+    scrollbar-width: thin;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+/* Fade In Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInFromBottom {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideOutToBottom {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes glow {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(168, 85, 247, 0.8);
+    }
+}
+
+@keyframes typewriter {
+    from {
+        width: 0;
+    }
+    to {
+        width: 100%;
+    }
+}
+
+@keyframes blink {
+    0%, 49% {
+        border-right-color: rgba(255, 255, 255, 0.75);
+    }
+    50%, 100% {
+        border-right-color: transparent;
+    }
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+/* Animation Classes */
+.animate-in {
+    animation: fadeIn var(--transition-base);
+}
+
+.animate-fade-in {
+    animation: fadeIn var(--transition-base);
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp var(--transition-base);
+}
+
+.animate-fade-in-down {
+    animation: fadeInDown var(--transition-base);
+}
+
+.animate-slide-in-right {
+    animation: slideInFromRight var(--transition-base);
+}
+
+.animate-slide-in-left {
+    animation: slideInFromLeft var(--transition-base);
+}
+
+.animate-slide-in-bottom {
+    animation: slideInFromBottom var(--transition-base);
+}
+
+.animate-scale-in {
+    animation: scaleIn var(--transition-base);
+}
+
+.animate-spin-slow {
+    animation: spin 3s linear infinite;
+}
+
+.animate-pulse-slow {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-bounce-slow {
+    animation: bounce 2s infinite;
+}
+
+.animate-glow {
+    animation: glow 2s ease-in-out infinite;
+}
+
+.animate-typewriter {
+    animation: typewriter 0.7s steps(60, end);
+    border-right: 3px solid rgba(255, 255, 255, 0.75);
+    animation: typewriter 0.7s steps(60, end), blink 0.7s step-end infinite;
+}
+
+.zoom-in {
+    animation: scaleIn var(--transition-base);
+}
+
+/* Glassmorphism Classes */
+.glass {
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-dark {
+    background: var(--glass-dark);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Gradient Classes */
+.gradient-primary {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+}
+
+.gradient-primary-hover:hover {
+    background: linear-gradient(135deg, var(--primary-dark), var(--secondary-dark));
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Shadow Classes */
+.shadow-glow {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+.shadow-glow-hover:hover {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+}
+
+.shadow-lg-glass {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+}
+
+/* Transition Classes */
+.transition-smooth {
+    transition: all var(--transition-base);
+}
+
+.transition-fast {
+    transition: all var(--transition-fast);
+}
+
+.transition-slow {
+    transition: all var(--transition-slow);
+}
+
+/* Hover Scale Effect */
+.hover-scale {
+    transition: transform var(--transition-base);
+}
+
+.hover-scale:hover {
+    transform: scale(1.05);
+}
+
+.hover-scale-sm:hover {
+    transform: scale(1.02);
+}
+
+.hover-scale-lg:hover {
+    transform: scale(1.1);
+}
+
+/* Hover Lift Effect */
+.hover-lift {
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* ============================================
+   COMPONENT STYLES
+   ============================================ */
+
+/* Navbar Styling */
+nav {
+    animation: fadeInDown 0.5s ease-out;
+}
+
+/* Drop Zone Styling */
+#dropZone {
+    animation: slideInFromBottom 0.5s ease-out;
+    transition: all var(--transition-base);
+}
+
+#dropZone:hover {
+    border-color: var(--primary);
+    background: rgba(59, 130, 246, 0.05);
+    transform: translateY(-2px);
+}
+
+#dropZone.dragover {
+    border-color: var(--primary);
+    background: rgba(59, 130, 246, 0.1);
+    transform: scale(1.02);
+}
+
+/* Upload Progress Bar */
+#uploadProgress {
+    animation: fadeInUp 0.3s ease-out;
+}
+
+#uploadBar {
+    animation: slideInFromLeft 0.3s ease-out;
+}
+
+/* File Info Card */
+#fileInfo {
+    animation: slideInFromBottom 0.4s ease-out;
+}
+
+/* Chat Container */
+#chatContainer {
+    animation: fadeIn 0.4s ease-out;
+}
+
+/* Messages */
+.message {
+    animation: slideInFromBottom 0.3s ease-out;
+}
+
+.message.user {
+    justify-content: flex-end;
+}
+
+.message.ai {
+    justify-content: flex-start;
+}
+
+.message-bubble {
+    max-width: 75%;
+    padding: 12px 16px;
+    border-radius: 16px;
+    word-wrap: break-word;
+    animation: fadeInUp 0.3s ease-out;
+    line-height: 1.5;
+}
+
+.message-bubble.user {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-bottom-right-radius: 4px;
+}
+
+.message-bubble.ai {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom-left-radius: 4px;
+}
+
+.message-bubble.ai:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* Typing Indicator */
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 16px;
+}
+
+.typing-indicator span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    animation: bounce 1.4s infinite;
+}
+
+.typing-indicator span:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+/* Source Reference */
+.source-reference {
+    margin-top: 8px;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-left: 3px solid var(--primary);
+    border-radius: 4px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    animation: slideInFromLeft 0.3s ease-out;
+}
+
+/* Buttons */
+button {
+    transition: all var(--transition-base);
+    cursor: pointer;
+    user-select: none;
+    font-weight: 500;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Primary Button */
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    transition: all var(--transition-base);
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+}
+
+.btn-primary:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+/* Secondary Button */
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: all var(--transition-base);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Input Fields */
+input[type="text"],
+input[type="email"],
+textarea {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 10px 12px;
+    border-radius: 8px;
+    transition: all var(--transition-base);
+}
+
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+textarea::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+textarea:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Toast Notifications */
+#errorToast,
+#successToast {
+    animation: slideInFromBottom 0.4s ease-out;
+}
+
+#errorToast.hidden,
+#successToast.hidden {
+    animation: slideOutToBottom 0.4s ease-out;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Loading Spinner */
+#loadingSpinner {
+    animation: fadeIn 0.3s ease-out;
+}
+
+#loadingSpinner.hidden {
+    animation: fadeIn 0.3s ease-out reverse;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.spinner {
+    position: relative;
+    width: 64px;
+    height: 64px;
+}
+
+.spinner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+}
+
+.spinner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 4px solid transparent;
+    border-top-color: var(--primary);
+    border-right-color: var(--secondary);
+    animation: spin 1s linear infinite;
+}
+
+/* Modal */
+.modal {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content {
+    animation: scaleIn 0.3s ease-out;
+}
+
+.modal.hidden {
+    animation: fadeIn 0.3s ease-out reverse;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* ============================================
+   RESPONSIVE STYLES
+   ============================================ */
+
+/* Mobile First */
+@media (max-width: 640px) {
+    body {
+        font-size: 14px;
+    }
+
+    .message-bubble {
+        max-width: 90%;
+    }
+
+    nav h1 {
+        display: none;
+    }
+
+    #messagesArea {
+        padding: 12px 16px !important;
+    }
+
+    .message-bubble {
+        font-size: 14px;
+        padding: 10px 12px;
+    }
+
+    #chatHistory {
+        max-height: 250px;
+    }
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .message-bubble {
+        max-width: 85%;
+    }
+}
+
+/* Large Screens */
+@media (min-width: 1280px) {
+    .message-bubble {
+        max-width: 60%;
+    }
+}
+
+/* Landscape Orientation */
+@media (max-height: 600px) {
+    #chatContainer {
+        max-height: calc(100vh - 120px);
+    }
+}
+
+/* High DPI Displays */
+@media (min-resolution: 192dpi) {
+    html {
+        font-size: 16px;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Dark Mode Specific */
+@media (prefers-color-scheme: dark) {
+    body {
+        background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+    }
+}
+
+/* Print Styles */
+@media print {
+    nav,
+    #dropZone,
+    #sendBtn,
+    #actionButtons,
+    #infoBtn,
+    #menuBtn {
+        display: none;
+    }
+
+    body {
+        background: white;
+        color: black;
+    }
+
+    .message-bubble {
+        background: white;
+        border: 1px solid #ccc;
+        color: black;
+    }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+/* Focus Visible */
+:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+button:focus-visible {
+    outline-offset: 4px;
+}
+
+input:focus-visible,
+textarea:focus-visible {
+    outline-offset: 2px;
+}
+
+/* Skip to Content */
+.skip-to-content {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--primary);
+    color: white;
+    padding: 8px;
+    text-decoration: none;
+    z-index: 100;
+}
+
+.skip-to-content:focus {
+    top: 0;
+}
+
+/* ARIA Live Region */
+[role="status"],
+[role="alert"] {
+    position: relative;
+    margin-top: 1rem;
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: more) {
+    .glass {
+        border: 2px solid rgba(255, 255, 255, 0.5);
+    }
+
+    button {
+        border: 2px solid currentColor;
+    }
+}
+
+/* ============================================
+   PERFORMANCE OPTIMIZATIONS
+   ============================================ */
+
+/* Will Change */
+.message-bubble,
+button,
+input {
+    will-change: transform, opacity;
+}
+
+/* Contain */
+#messagesArea {
+    contain: layout style;
+}
+
+/* GPU Acceleration */
+.glass,
+.message-bubble,
+.modal-content {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+/* ============================================
+   DARK MODE SUPPORT
+   ============================================ */
+
+.dark {
+    color-scheme: dark;
+}
+
+.dark body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+    color: #f8fafc;
+}
+
+.dark input,
+.dark textarea {
+    background: rgba(255, 255, 255, 0.05);
+    color: #f8fafc;
+}
+
+/* ============================================
+   UTILITY SPACING
+   ============================================ */
+
+.gap-xs { gap: 0.5rem; }
+.gap-sm { gap: 1rem; }
+.gap-md { gap: 1.5rem; }
+.gap-lg { gap: 2rem; }
+.gap-xl { gap: 2.5rem; }
+
+.p-xs { padding: 0.5rem; }
+.p-sm { padding: 1rem; }
+.p-md { padding: 1.5rem; }
+.p-lg { padding: 2rem; }
+.p-xl { padding: 2.5rem; }
+
+.m-xs { margin: 0.5rem; }
+.m-sm { margin: 1rem; }
+.m-md { margin: 1.5rem; }
+.m-lg { margin: 2rem; }
+.m-xl { margin: 2.5rem; }

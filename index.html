@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Document Intelligence - ChatPDF Clone</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- ============================================
+         NAVBAR
+         ============================================ -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <!-- Logo -->
+            <div class="navbar-logo">
+                <span class="logo-icon">🤖</span>
+                <span class="logo-text">AI Docs</span>
+            </div>
+
+            <!-- Navbar Menu -->
+            <div class="navbar-menu">
+                <button id="themeToggle" class="theme-toggle">
+                    <span id="sunIcon" class="icon">☀️</span>
+                    <span id="moonIcon" class="icon hidden">🌙</span>
+                </button>
+                <button id="infoBtn" class="info-btn">ℹ️ Info</button>
+                <button id="menuBtn" class="menu-btn">☰</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================
+         MAIN CONTAINER
+         ============================================ -->
+    <div class="container">
+        <!-- Sidebar - Chat History -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3>Chat History</h3>
+                <button id="clearHistoryBtn" class="clear-btn" title="Clear all chats">🗑️</button>
+            </div>
+            <div id="chatHistory" class="chat-history">
+                <div class="empty-state">No chats yet</div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Upload Section -->
+            <section class="upload-section">
+                <div id="dropZone" class="drop-zone">
+                    <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <h2>Upload PDF Document</h2>
+                    <p>Drag and drop your PDF here or click to browse</p>
+                    <input id="fileInput" type="file" accept=".pdf" hidden>
+                </div>
+
+                <!-- Upload Progress -->
+                <div id="uploadProgress" class="upload-progress hidden">
+                    <div class="progress-bar-container">
+                        <div id="uploadBar" class="progress-bar"></div>
+                    </div>
+                    <p class="progress-text">Uploading... <span id="uploadPercent">0</span>%</p>
+                </div>
+
+                <!-- File Info -->
+                <div id="fileInfo" class="file-info hidden">
+                    <div class="file-details">
+                        <svg class="file-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"></path>
+                        </svg>
+                        <div class="file-meta">
+                            <p class="file-name" id="fileName">document.pdf</p>
+                            <p class="file-stats">
+                                <span id="fileSize">0 MB</span> • 
+                                <span id="pageCount">0 pages</span>
+                            </p>
+                        </div>
+                    </div>
+                    <button id="clearFileBtn" class="clear-file-btn">✕ Clear</button>
+                </div>
+            </section>
+
+            <!-- Welcome Screen -->
+            <div id="welcomeScreen" class="welcome-screen">
+                <div class="welcome-content">
+                    <div class="welcome-icon">📄</div>
+                    <h1>Welcome to AI Document Intelligence</h1>
+                    <p>Upload a PDF document to get started. Ask questions and get AI-powered answers using advanced RAG technology.</p>
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <span class="feature-icon">⚡</span>
+                            <span class="feature-text">Instant Answers</span>
+                        </div>
+                        <div class="feature-card">
+                            <span class="feature-icon">🎯</span>
+                            <span class="feature-text">Accurate Results</span>
+                        </div>
+                        <div class="feature-card">
+                            <span class="feature-icon">💾</span>
+                            <span class="feature-text">Save History</span>
+                        </div>
+                        <div class="feature-card">
+                            <span class="feature-icon">🌙</span>
+                            <span class="feature-text">Dark Mode</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Container -->
+            <div id="chatContainer" class="chat-container hidden">
+                <div id="messagesArea" class="messages-area"></div>
+
+                <!-- Chat Input -->
+                <div class="chat-input-container">
+                    <div class="input-wrapper">
+                        <textarea 
+                            id="questionInput" 
+                            class="question-input" 
+                            placeholder="Ask a question about your document..."
+                            rows="1"
+                        ></textarea>
+                        <button id="sendBtn" class="send-btn" title="Send message (Enter)">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M16.6915026,12.4744748 L3.50612381,13.2599618 C3.19218622,13.2599618 3.03521743,13.4170592 3.03521743,13.5741566 L1.15159189,20.0151496 C0.8376543,20.8006365 0.99,21.89 1.77946707,22.52 C2.41,22.99 3.50612381,23.1 4.13399899,22.8429026 L21.714504,14.0454487 C22.6563168,13.5741566 23.1272231,12.6315722 22.9702544,11.6889879 L4.13399899,1.16151496 C3.34915502,0.9 2.40734225,0.9 1.77946707,1.4429026 C0.994623095,2.0763165 0.837654306,3.16564632 1.15159189,3.99113722 L3.03521743,10.4320455 C3.03521743,10.5891429 3.19218622,10.7462403 3.50612381,10.7462403 L16.6915026,11.5317272 C16.6915026,11.5317272 17.1624089,11.5317272 17.1624089,12.0030193 C17.1624089,12.4744748 16.6915026,12.4744748 16.6915026,12.4744748 Z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Action Buttons -->
+        <div id="actionButtons" class="action-buttons hidden">
+            <button id="copyBtn" class="action-btn" title="Copy last response">📋 Copy</button>
+            <button id="downloadBtn" class="action-btn" title="Download chat as text">⬇️ Download</button>
+            <button id="exportBtn" class="action-btn" title="Export chat as JSON">📤 Export</button>
+            <button id="newChatBtn" class="action-btn primary" title="Start new conversation">➕ New Chat</button>
+        </div>
+    </div>
+
+    <!-- ============================================
+         MODALS & NOTIFICATIONS
+         ============================================ -->
+
+    <!-- Info Modal -->
+    <div id="infoModal" class="modal hidden">
+        <div class="modal-content">
+            <button class="closeModal">✕</button>
+            <h2>About AI Document Intelligence</h2>
+            <div class="modal-body">
+                <h3>Features</h3>
+                <ul>
+                    <li>🚀 <strong>Fast Processing:</strong> Upload PDFs and get instant AI responses</li>
+                    <li>🤖 <strong>AI Powered:</strong> Uses Google Gemini API for intelligent answers</li>
+                    <li>🎯 <strong>RAG Technology:</strong> Retrieval-Augmented Generation for accurate context</li>
+                    <li>💾 <strong>Chat History:</strong> Save and load previous conversations</li>
+                    <li>🌙 <strong>Dark Mode:</strong> Easy on the eyes with theme toggle</li>
+                    <li>📱 <strong>Responsive:</strong> Works on desktop and mobile devices</li>
+                </ul>
+
+                <h3>How to Use</h3>
+                <ol>
+                    <li>Upload a PDF document</li>
+                    <li>Wait for processing to complete</li>
+                    <li>Ask questions about the document</li>
+                    <li>Get AI-powered answers with source references</li>
+                    <li>Copy, download, or export conversations</li>
+                </ol>
+
+                <h3>Setup Requirements</h3>
+                <p>Before using, ensure you have:</p>
+                <ul>
+                    <li>Google Gemini API Key</li>
+                    <li>Qdrant Vector Database running</li>
+                    <li>n8n Workflow Engine configured</li>
+                </ul>
+
+                <h3>Version</h3>
+                <p>AI Document Intelligence v1.0.0</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Toast -->
+    <div id="errorToast" class="toast error hidden">
+        <div class="toast-content">
+            <span class="toast-icon">❌</span>
+            <div class="toast-text">
+                <p id="errorMessage" class="toast-title">Error</p>
+                <p id="errorDetail" class="toast-detail">An error occurred</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div id="successToast" class="toast success hidden">
+        <div class="toast-content">
+            <span class="toast-icon">✅</span>
+            <p id="successMessage" class="toast-text">Success!</p>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="loading-spinner hidden">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+</body>
+</html>
